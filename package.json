@@ -1,0 +1,32 @@
+{
+  "name": "optimal-form-builder",
+  "version": "1.0.0",
+  "description": "Form builder app with Node.js MVC, and Tailwind Typeform style UI.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonathanbasuki/optimal-form-builder.git"
+  },
+  "author": "https://github.com/jonathanbasuki",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonathanbasuki/optimal-form-builder/issues"
+  },
+  "homepage": "https://github.com/jonathanbasuki/optimal-form-builder#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-jwt": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.0",
+    "mysql2": "^3.14.1",
+    "sequelize": "^6.37.7",
+    "uuid": "^11.1.0"
+  }
+}
