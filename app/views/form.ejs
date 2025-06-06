@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic Typeform Clone</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Custom star rating styles */
+    .star {
+      cursor: pointer;
+      color: #9ca3af;
+      /* gray-400 */
+      font-size: 2.5rem;
+      /* larger stars */
+      transition: color 0.3s ease;
+    }
+
+    .star.filled {
+      color: #f59e0b;
+      /* amber-500 */
+    }
+
+    /* Toggle switch for Yes/No field */
+    input[type="checkbox"].toggle {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    input[type="checkbox"].toggle+label {
+      cursor: pointer;
+      width: 3.5rem;
+      height: 1.75rem;
+      background-color: #ddd6fe;
+      /* violet-200 */
+      display: inline-block;
+      border-radius: 9999px;
+      position: relative;
+      transition: background-color 0.3s;
+      box-shadow: 0 0 8px rgb(167 139 250 / 0.7);
+    }
+
+    input[type="checkbox"].toggle:checked+label {
+      background-color: #8b5cf6;
+      /* violet-500 */
+      box-shadow: 0 0 12px #8b5cf6;
+    }
+
+    input[type="checkbox"].toggle+label::after {
+      content: "";
+      position: absolute;
+      top: 0.125rem;
+      left: 0.125rem;
+      width: 1.5rem;
+      height: 1.5rem;
+      background-color: white;
+      border-radius: 9999px;
+      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      transition: transform 0.3s;
+    }
+
+    input[type="checkbox"].toggle:checked+label::after {
+      transform: translateX(1.75rem);
+    }
+
+    /* Input & textarea focus */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="date"],
+    textarea,
+    select,
+    input[type="range"],
+    input[type="file"] {
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background-color: #fafafa;
+      color: #3730a3;
+      /* indigo-900 for text */
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="email"]:focus,
+    input[type="date"]:focus,
+    textarea:focus,
+    select:focus,
+    input[type="range"]:focus,
+    input[type="file"]:focus {
+      outline: none;
+      border-color: #7c3aed;
+      /* violet-600 */
+      box-shadow: 0 0 8px #a78bfa;
+      background-color: #fff;
+    }
+
+    /* File input styling fallback */
+    input[type="file"] {
+      cursor: pointer;
+      border: 1px solid #c4b5fd;
+      /* violet-300 */
+      padding: 0.375rem 0.5rem;
+      border-radius: 0.375rem;
+      color: #3730a3;
+    }
+
+    /* More engaging combobox styling */
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, #a78bfa 25%, transparent 25%),
+        linear-gradient(-45deg, #a78bfa 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #a78bfa 75%),
+        linear-gradient(-45deg, transparent 75%, #a78bfa 75%);
+      background-position:
+        calc(100% - 1.5rem) 0.75rem,
+        calc(100% - 1rem) 0.75rem,
+        calc(100% - 1.5rem) 1.25rem,
+        calc(100% - 1rem) 1.25rem;
+      background-size: 0.5rem 0.5rem;
+      background-repeat: no-repeat;
+      border: 2px solid #a78bfa;
+      /* violet-400 */
+      border-radius: 0.75rem;
+      padding: 0.75rem 3rem 0.75rem 1.25rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #581c87;
+      /* violet-900 */
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    select:hover {
+      box-shadow: 0 0 10px #a78bfa;
+      border-color: #7c3aed;
+    }
+
+    select:focus {
+      outline: none;
+      box-shadow: 0 0 15px #c4b5fd;
+      border-color: #7c3aed;
+    }
+
+    select option {
+      color: #3730a3;
+      font-weight: 500;
+    }
+
+    /* Container box style */
+    main {
+      background: rgba(255 255 255 / 0.15);
+      backdrop-filter: saturate(180%) blur(12px);
+      -webkit-backdrop-filter: saturate(180%) blur(12px);
+      box-shadow: 0 8px 32px 0 rgba(99, 76, 255, 0.35);
+      max-width: 800px;
+      width: 100%;
+      border-radius: 0.75rem;
+    }
+  </style>
+</head>
+
+<body
+  class="bg-gradient-to-tr from-purple-900 via-purple-700 to-yellow-400 min-h-screen flex items-center justify-center p-4">
+  <main class="rounded-xl shadow-2xl max-w-3xl w-full p-8 md:p-12 flex flex-col text-white bg-transparent">
+    <form id="dynamicForm" class="flex flex-col" novalidate>
+      <!-- Dynamic steps will be injected here -->
+      <div id="stepsContainer" class="w-full"></div>
+
+      <!-- Navigation buttons -->
+      <div class="mt-8 flex justify-between select-none" aria-label="Form navigation">
+        <button type="button" id="prevBtn"
+          class="text-purple-400 font-semibold px-6 py-2 rounded-lg border border-purple-400 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          disabled>
+          Previous
+        </button>
+        <button type="button" id="nextBtn"
+          class="text-white font-semibold px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400">
+          Next
+        </button>
+        <button type="submit" id="submitBtn"
+          class="hidden text-white font-semibold px-6 py-2 rounded-lg bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400">
+          Submit
+        </button>
+      </div>
+    </form>
+  </main>
+  <script>
+    // JSON form data from user input
+    const formJson = {
+      status: 200,
+      message: "Form details fetched successfully!",
+      data: {
+        form_id: "e5857ffe-2e9c-447a-8d19-7a24aa402089",
+        title: "online class form 2",
+        subtitle: "this is subtitle 2",
+        confirmation_message: "Thanks for completing the form!",
+        confirmation_action: "action link 2",
+        is_open: 0,
+        fields: [
+          {
+            field_name: "Name",
+            field_type: "Short Text",
+            field_value: null,
+            is_required: 1,
+          },
+          {
+            field_name: "Feedback",
+            field_type: "Long Text",
+            field_value: null,
+            is_required: 1,
+          },
+          {
+            field_name: "Age",
+            field_type: "Number",
+            field_value: null,
+            is_required: 0,
+          },
+          {
+            field_name: "Visit Date",
+            field_type: "Date",
+            field_value: null,
+            is_required: 1,
+          },
+          {
+            field_name: "Satisfaction",
+            field_type: "Rating",
+            field_value: null,
+            is_required: 1,
+          },
+          {
+            field_name: "Subscribe",
+            field_type: "Yes/No",
+            field_value: null,
+            is_required: 0,
+          },
+          {
+            field_name: "Contact Methods",
+            field_type: "Checkbox",
+            field_value: null,
+            is_required: 0,
+          },
+          {
+            field_name: "Department",
+            field_type: "Dropdown",
+            field_value: null,
+            is_required: 1,
+          },
+          {
+            field_name: "Experience",
+            field_type: "Scale",
+            field_value: null,
+            is_required: 0,
+          },
+          {
+            field_name: "Resume",
+            field_type: "File Upload",
+            field_value: null,
+            is_required: 0,
+          },
+        ],
+        updated_at: "2025-06-06T05:30:09.000Z",
+      },
+    };
+
+    // Helper function for safe IDs
+    function sanitizeId(text) {
+      return text.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9\-]/g, "");
+    }
+
+    // Options for 'Contact Methods' checkbox (multiple choice) and Department dropdown
+    const contactMethodOptions = [
+      "Email",
+      "Phone",
+      "SMS",
+      "Postal Mail"
+    ];
+    const departmentOptions = [
+      "Sales",
+      "Marketing",
+      "Development",
+      "Customer Support",
+      "HR"
+    ];
+
+    // Container to hold steps
+    const stepsContainer = document.getElementById("stepsContainer");
+
+    // Steps array references
+    let steps = [];
+
+    // Current step index
+    let currentStep = 0;
+
+    // Render the start (intro) step: title, subtitle and Start button
+    function renderIntroStep() {
+      const stepDiv = document.createElement("section");
+      stepDiv.classList.add("step");
+      stepDiv.dataset.step = "intro";
+      stepDiv.setAttribute("aria-hidden", "false");
+      stepDiv.setAttribute("aria-label", "Introductory Screen");
+      stepDiv.innerHTML = `
+        <h1 class="text-5xl font-extrabold text-center mb-4 select-none">Welcome to the Typeform Clone</h1>
+        <p class="text-center text-lg text-purple-200 mb-8">Please answer the following questions to proceed.</p>
+        <div class="flex justify-center">
+            <button type="button" id="startBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400">Start</button>
+        </div>
+        `;
+      stepsContainer.appendChild(stepDiv);
+      steps.push(stepDiv);
+
+      // Start button event
+      stepDiv.querySelector("#startBtn").addEventListener("click", () => {
+        currentStep++;
+        showStep(currentStep);
+      });
+    }
+
+    // Render form field dynamically depending on type and field data
+    function renderFieldStep(field, index) {
+      const idSafe = sanitizeId(field.field_name);
+      const stepDiv = document.createElement("section");
+      stepDiv.classList.add("step", "hidden", "flex", "flex-col");
+      stepDiv.dataset.step = index.toString();
+      stepDiv.setAttribute("aria-hidden", "true");
+      stepDiv.setAttribute("aria-label", `Step ${index}: ${field.field_name}`);
+
+      // accessibility required attribute string
+      const requiredAttr = field.is_required ? "required" : "";
+
+      // Field-label HTML string
+      const labelHtml = `<label for="${idSafe}" class="block font-semibold mb-2 text-indigo-900">${field.field_name}${field.is_required ? " *" : ""}</label>`;
+
+      // Input HTML string builder per field type
+      let inputHtml = "";
+
+      switch (field.field_type) {
+        case "Short Text":
+          inputHtml = `<input type="text" id="${idSafe}" name="${idSafe}" placeholder="Your answer here" ${requiredAttr}
+            aria-required="${field.is_required ? "true" : "false"}"
+            class="border border-indigo-300 rounded-md px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" autocomplete="off" />`;
+          break;
+
+        case "Long Text":
+          inputHtml = `<textarea id="${idSafe}" name="${idSafe}" rows="5" placeholder="Your detailed answer here" ${requiredAttr}
+            aria-required="${field.is_required ? "true" : "false"}"
+            class="border border-indigo-300 rounded-md px-4 py-3 text-lg resize-y focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" ></textarea>`;
+          break;
+
+        case "Number":
+          inputHtml = `<input type="number" id="${idSafe}" name="${idSafe}" placeholder="Enter a number" min="0" max="100" ${requiredAttr}
+            aria-required="${field.is_required ? "true" : "false"}"
+            class="border border-indigo-300 rounded-md px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />`;
+          break;
+
+        case "Date":
+          inputHtml = `<input type="date" id="${idSafe}" name="${idSafe}" ${requiredAttr}
+            aria-required="${field.is_required ? "true" : "false"}"
+            class="border border-indigo-300 rounded-md px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />`;
+          break;
+
+        case "Rating": {
+          // stars for rating
+          inputHtml = `
+            <fieldset aria-label="Rating" class="mb-4">
+              <legend class="block font-semibold mb-2 text-indigo-900">Rate from 1 to 5 stars${field.is_required ? " *" : ""}</legend>
+              <div id="${idSafe}Stars" class="flex gap-3" role="radiogroup" aria-required="${field.is_required ? "true" : "false"}" tabindex="0">
+                <span class="star" data-value="1" role="radio" aria-checked="false" tabindex="-1" aria-label="1 star">&#9733;</span>
+                <span class="star" data-value="2" role="radio" aria-checked="false" tabindex="-1" aria-label="2 stars">&#9733;</span>
+                <span class="star" data-value="3" role="radio" aria-checked="false" tabindex="-1" aria-label="3 stars">&#9733;</span>
+                <span class="star" data-value="4" role="radio" aria-checked="false" tabindex="-1" aria-label="4 stars">&#9733;</span>
+                <span class="star" data-value="5" role="radio" aria-checked="false" tabindex="-1" aria-label="5 stars">&#9733;</span>
+              </div>
+              <input type="hidden" id="${idSafe}" name="${idSafe}" ${requiredAttr} aria-required="${field.is_required ? "true" : "false"}" />
+            </fieldset>
+          `;
+          break;
+        }
+
+        case "Yes/No":
+          inputHtml = `
+            <div class="flex items-center gap-4">
+              <input type="checkbox" id="${idSafe}" name="${idSafe}" class="toggle" ${requiredAttr} aria-required="${field.is_required ? "true" : "false"}" />
+              <label for="${idSafe}" aria-label="${field.field_name} toggle"></label>
+              <span class="text-indigo-900 select-none">${field.field_name}</span>
+            </div>
+          `;
+          break;
+
+        case "Checkbox":
+          inputHtml = `<fieldset class="mb-4"><legend class="block font-semibold mb-2 text-indigo-900">${field.field_name}${field.is_required ? " *" : ""}</legend>`;
+          // Use contactMethodOptions for this field because the example JSON has "Contact Methods"
+          // We do a check to confirm field name to apply options, otherwise empty array.
+          let options = [];
+          if (field.field_name === "Contact Methods") {
+            options = contactMethodOptions;
+          }
+          options.forEach((option) => {
+            const optionId = `${idSafe}-${sanitizeId(option)}`;
+            inputHtml += `
+              <label class="inline-flex items-center cursor-pointer mb-2">
+                <input type="checkbox" id="${optionId}" name="${idSafe}" value="${option}" class="mr-2" />
+                <span class="select-none text-indigo-900">${option}</span>
+              </label>
+            `;
+          });
+          inputHtml += `</fieldset>`;
+          break;
+
+        case "Dropdown":
+          inputHtml = `<label for="${idSafe}" class="block font-semibold mb-2 text-indigo-900">${field.field_name}${field.is_required ? " *" : ""}</label>`;
+          inputHtml += `<select id="${idSafe}" name="${idSafe}" ${requiredAttr} aria-required="${field.is_required ? "true" : "false"}"
+            class="focus:ring-indigo-500 border-indigo-400 hover:shadow-lg hover:border-indigo-600 rounded-lg px-4 py-3 text-lg font-semibold text-indigo-900 w-full cursor-pointer transition-shadow transition-border">
+            <option value="" disabled selected>Select an option</option>`;
+          let depOptions = [];
+          if (field.field_name === "Department") {
+            depOptions = departmentOptions;
+          }
+          depOptions.forEach((opt) => {
+            inputHtml += `<option value="${opt}">${opt}</option>`;
+          });
+          inputHtml += `</select>`;
+          break;
+
+        case "Scale":
+          inputHtml = `
+            <label for="${idSafe}" class="block font-semibold mb-2 text-indigo-900">${field.field_name}${field.is_required ? " *" : ""}</label>
+            <div class="flex items-center gap-4">
+              <span class="text-yellow-500 font-semibold select-none">1</span>
+              <input type="range" id="${idSafe}" name="${idSafe}" min="1" max="10" step="1" value="5" ${requiredAttr}
+                aria-required="${field.is_required ? "true" : "false"}"
+                class="cursor-pointer accent-yellow-400 w-full"
+                oninput="this.nextElementSibling.textContent = this.value" />
+              <span class="text-yellow-500 font-semibold select-none">10</span>
+              <span class="w-10 text-center font-bold text-yellow-500">5</span>
+            </div>
+          `;
+          break;
+
+        case "File Upload":
+          inputHtml = `<label for="${idSafe}" class="block font-semibold mb-2 text-indigo-900">${field.field_name}${field.is_required ? " *" : ""}</label>
+            <input type="file" id="${idSafe}" name="${idSafe}" ${requiredAttr} aria-required="${field.is_required ? "true" : "false"}"
+              class="w-full border border-indigo-300 rounded-md px-3 py-2 cursor-pointer transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />`;
+          break;
+
+        default:
+          inputHtml = `<p class="text-indigo-400">Unsupported field type: ${field.field_type}</p>`;
+      }
+
+      stepDiv.innerHTML = labelHtml + inputHtml;
+      stepsContainer.appendChild(stepDiv);
+      steps.push(stepDiv);
+
+      // After rendering the rating step, add interactive star rating behavior
+      if (field.field_type === "Rating") {
+        const starContainer = stepDiv.querySelector(`#${idSafe}Stars`);
+        const hiddenInput = stepDiv.querySelector(`input[type=hidden]`);
+
+        let currentRating = 0;
+
+        function setRating(r) {
+          currentRating = r;
+          hiddenInput.value = r;
+          const stars = starContainer.querySelectorAll(".star");
+          stars.forEach((star, idx) => {
+            if (idx < r) {
+              star.classList.add("filled");
+              star.setAttribute("aria-checked", "true");
+              star.tabIndex = 0;
+            } else {
+              star.classList.remove("filled");
+              star.setAttribute("aria-checked", "false");
+              star.tabIndex = -1;
+            }
+          });
+        }
+
+        starContainer.addEventListener("click", (e) => {
+          if (e.target.classList.contains("star")) {
+            const val = Number(e.target.dataset.value);
+            setRating(val);
+          }
+        });
+
+        starContainer.addEventListener("keydown", (e) => {
+          const stars = Array.from(starContainer.querySelectorAll(".star"));
+          const index = stars.findIndex((star) => star === document.activeElement);
+          if (e.key === "ArrowRight") {
+            e.preventDefault();
+            if (index < stars.length - 1) {
+              stars[index + 1].focus();
+            }
+          } else if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            if (index > 0) {
+              stars[index - 1].focus();
+            }
+          } else if (e.key === " " || e.key === "Enter") {
+            e.preventDefault();
+            if (document.activeElement.classList.contains("star")) {
+              const val = Number(document.activeElement.dataset.value);
+              setRating(val);
+            }
+          }
+        });
+
+        // Initialize rating to 0
+        setRating(0);
+      }
+    }
+
+    // Render the final confirmation step with message and restart button
+    function renderConfirmationStep() {
+      const stepDiv = document.createElement("section");
+      stepDiv.classList.add("step", "hidden", "flex", "flex-col", "items-center", "text-center");
+      stepDiv.dataset.step = "confirmation";
+      stepDiv.setAttribute("aria-hidden", "true");
+
+      stepDiv.innerHTML = `
+        <h2 class="text-4xl font-extrabold mb-6 text-indigo-900">${formJson.data.confirmation_message}</h2>
+        <button type="button" id="restartBtn"
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-10 py-3 rounded-md focus:outline-none focus:ring-4 focus:ring-indigo-300 transition">
+          Restart
+        </button>
+      `;
+
+      stepsContainer.appendChild(stepDiv);
+      steps.push(stepDiv);
+
+      stepDiv.querySelector("#restartBtn").addEventListener("click", () => {
+        dynamicForm.reset();
+        // reset rating fields manually since they're custom inputs
+        steps.forEach((step) => {
+          const ratingInput = step.querySelector("input[type=hidden]");
+          if (ratingInput) ratingInput.value = "";
+          // also clear stars fill
+          const stars = step.querySelectorAll(".star.filled");
+          stars.forEach((s) => s.classList.remove("filled"));
+        });
+        document.querySelectorAll('input[type="range"]').forEach(el => {
+          el.value = 5;
+          if (el.nextElementSibling) el.nextElementSibling.textContent = "5";
+        });
+        currentStep = 0;
+        showStep(currentStep);
+      });
+    }
+
+    // Show specified step, hiding others and update button states
+    function showStep(stepIndex) {
+      steps.forEach((step, idx) => {
+        if (idx === stepIndex) {
+          step.classList.remove("hidden");
+          step.setAttribute("aria-hidden", "false");
+
+          // Focus first input or button within
+          const focusable = step.querySelector(
+            "input, textarea, select, button, [tabindex]:not([tabindex='-1'])"
+          );
+          if (focusable) focusable.focus();
+        } else {
+          step.classList.add("hidden");
+          step.setAttribute("aria-hidden", "true");
+        }
+      });
+
+      // Navigation buttons visibility
+      if (stepIndex === 0) {
+        // Intro step: show only Next (start) btn. But we use a start button within intro screen, so hide nav buttons
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
+        submitBtn.style.display = "none";
+      } else if (stepIndex === steps.length - 1) {
+        // Confirmation step: show only restart button (inside step), hide nav buttons
+        prevBtn.style.display = "none";
+        nextBtn.style.display = "none";
+        submitBtn.style.display = "none";
+      } else if (stepIndex === steps.length - 2) {
+        // Last question step: show prev and submit buttons
+        prevBtn.style.display = "inline-block";
+        nextBtn.style.display = "none";
+        submitBtn.style.display = "inline-block";
+      } else {
+        // Middle steps: show prev and next buttons
+        prevBtn.style.display = "inline-block";
+        nextBtn.style.display = "inline-block";
+        submitBtn.style.display = "none";
+      }
+
+      // Disable prev on first question step
+      prevBtn.disabled = stepIndex <= 1;
+      prevBtn.setAttribute("aria-disabled", prevBtn.disabled.toString());
+    }
+
+    // Validate current step inputs before moving next or submitting
+    function validateCurrentStep() {
+      const step = steps[currentStep];
+      if (!step) return false;
+
+      // For rating hidden input, check value
+      const hiddenRating = step.querySelector("input[type=hidden]");
+      if (hiddenRating && hiddenRating.hasAttribute("required") && !hiddenRating.value) {
+        return false;
+      }
+
+      // Normal inputs, selects, textareas
+      const inputs = Array.from(
+        step.querySelectorAll("input, select, textarea")
+      ).filter((el) => el.offsetParent !== null);
+
+      // For checkboxes with name same - at least one checked if required
+      const groupedCheckboxes = {};
+      for (const input of inputs) {
+        if (input.type === "checkbox" && input.name) {
+          groupedCheckboxes[input.name] = groupedCheckboxes[input.name] || [];
+          groupedCheckboxes[input.name].push(input);
+        }
+      }
+
+      for (const name in groupedCheckboxes) {
+        const inputsGroup = groupedCheckboxes[name];
+        const anyRequired = inputsGroup.some(i => i.hasAttribute("required"));
+        const anyChecked = inputsGroup.some(i => i.checked);
+        if (anyRequired && !anyChecked) return false;
+      }
+
+      for (const input of inputs) {
+        if (input.required) {
+          if (input.type === "checkbox") {
+            // covered by groupedCheckboxes check
+            continue;
+          } else if (input.type === "radio") {
+            const radios = step.querySelectorAll(`input[name="${input.name}"]`);
+            const anyChecked = Array.from(radios).some(r => r.checked);
+            if (!anyChecked) return false;
+          } else if (input.type === "hidden" && input.name.includes("rating")) {
+            if (!input.value) return false;
+          } else if (input.value.trim() === "") {
+            return false;
+          }
+          // Email validation
+          if (input.type === "email" && input.value) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!regex.test(input.value.trim())) return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    // Initialize the form rendering and logic
+    function init() {
+      renderIntroStep();
+
+      formJson.data.fields.forEach((field, idx) => {
+        renderFieldStep(field, idx + 1);
+      });
+
+      renderConfirmationStep();
+
+      showStep(currentStep);
+    }
+
+    // Form controls & events
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const dynamicForm = document.getElementById("dynamicForm");
+
+    nextBtn.addEventListener("click", () => {
+      if (!validateCurrentStep()) {
+        const step = steps[currentStep];
+        (step.querySelector("input:invalid, select:invalid, textarea:invalid") || step.querySelector("input[aria-required='true'], select[aria-required='true'], textarea[aria-required='true']")).focus();
+        return;
+      }
+      currentStep++;
+      showStep(currentStep);
+    });
+
+    prevBtn.addEventListener("click", () => {
+      currentStep--;
+      showStep(currentStep);
+    });
+
+    dynamicForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (!validateCurrentStep()) {
+        const step = steps[currentStep];
+        (step.querySelector("input:invalid, select:invalid, textarea:invalid") || step.querySelector("input[aria-required='true'], select[aria-required='true'], textarea[aria-required='true']")).focus();
+        return;
+      }
+      // Submit simulated by showing confirmation step
+      currentStep++;
+      showStep(currentStep);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      init();
+    });
+  </script>
+</body>
+
+</html>
