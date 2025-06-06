@@ -21,13 +21,13 @@ exports.login = async (req, res) => {
     });
 
     if (!user) {
-        res.redirect('/auth/login');
+        return res.redirect('/auth/login');
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
     if (!passwordMatch) {
-        res.redirect('/auth/login');
+        return res.redirect('/auth/login');
     }
 
     // Save session
