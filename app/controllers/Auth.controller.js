@@ -1,9 +1,12 @@
 const bcrypt = require('bcryptjs');
 const { User } = require('../models');
+const { layout } = require('ejs-mate');
 
 exports.renderLogin = async (req, res) => {
     try {
-        res.render('auth/login');
+        res.render('auth/login', {
+            layout: false
+        });
     } catch (err) {
         res.status(404).json({
             status: 404,

@@ -4,11 +4,14 @@ exports.createUser = async (req, res) => {
     try {
         const user = await userService.createUser(req.body);
 
+        return res.redirect('/dashboard');
+        
         res.status(201).json({
             status: 201,
             message: 'User registered successfully!',
             data: user
         });
+
     } catch (err) {
         res.status(500).json({
             status: 500,

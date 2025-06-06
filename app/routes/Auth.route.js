@@ -8,6 +8,6 @@ const checkSession = require('../middlewares/checkSession');
 router.get('/auth/login', checkSession, authController.renderLogin);
 
 router.post('/auth/login', authController.login);
-router.get('/auth/logout', authController.logout);
+router.post('/auth/logout', authController.logout);
 
 module.exports = router;

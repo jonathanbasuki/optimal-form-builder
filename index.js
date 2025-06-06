@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const engine = require('ejs-mate');
+const expressLayouts = require('express-ejs-layouts');
 
 const sessionMiddleware = require('./app/middlewares/authSession.js');
 
@@ -19,6 +20,8 @@ const port = process.env.PORT || 3000;
 // Template engine
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
+app.use(expressLayouts);
+app.set('layout', 'layouts/main');
 app.set('views', path.join(__dirname, 'app/views'));
 
 // Middleware

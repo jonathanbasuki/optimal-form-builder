@@ -1,3 +1,4 @@
+const { layout } = require('ejs-mate');
 const formService = require('../services/formService');
 
 // Rendering 
@@ -21,7 +22,8 @@ exports.renderForm = async (req, res) => {
                 confirmation_message: form.confirmation_message,
                 confirmation_action: form.confirmation_action,
                 is_open: form.is_open,
-            }
+            },
+            layout: false
         });
     } catch (err) {
         res.status(500).json({
