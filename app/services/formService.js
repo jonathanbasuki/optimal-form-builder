@@ -1,7 +1,9 @@
 const { v4: uuidv4 } = require('uuid');
+
 const { Form, FormField } = require('../models');
 
-Form.createFormWithFields = async (formData) => {
+// Create new form
+exports.createFormWithFields = async (formData) => {
     const formId = uuidv4();
 
     const t = await Form.sequelize.transaction();
@@ -23,6 +25,7 @@ Form.createFormWithFields = async (formData) => {
             field_name: field.field_name,
             field_type: field.field_type,
             field_value: field.field_value,
+            validation: field.validation,
             is_required: field.is_required,
             created_at: new Date()
         }));
@@ -45,23 +48,21 @@ Form.createFormWithFields = async (formData) => {
 }
 
 // Get all forms
-Form.getAllForms = async () => {
+exports.getAllForms = async () => {
     return await Form.findAll({
         attributes: ['form_id', 'title', 'is_open', 'updated_at']
     })
 }
 
-module.exports = Form
-
 // Get form details
-Form.getFormWithFields = async (form_id) => {
+exports.getFormWithFields = async (form_id) => {
     try {
         const form = await Form.findOne({
             where: { form_id },
             include: [{
                 model: FormField,
                 as: 'fields',
-                attributes: ['field_name', 'field_type', 'field_value', 'is_required']
+                attributes: ['field_id', 'field_name', 'field_type', 'field_value', 'validation', 'is_required']
             }]
         });
 
@@ -85,7 +86,7 @@ Form.getFormWithFields = async (form_id) => {
 };
 
 // Update form and related fields
-Form.updateFormWithFields = async (form_id, formData) => {
+exports.updateFormWithFields = async (form_id, formData) => {
     const t = await Form.sequelize.transaction();
 
     try {
@@ -115,6 +116,7 @@ Form.updateFormWithFields = async (form_id, formData) => {
             field_name: field.field_name,
             field_type: field.field_type,
             field_value: field.field_value,
+            validation: field.validation,
             is_required: field.is_required,
             created_at: new Date()
         }));
@@ -136,7 +138,7 @@ Form.updateFormWithFields = async (form_id, formData) => {
 };
 
 // Delete form and related fields
-Form.deleteFormWithFields = async (form_id) => {
+exports.deleteFormWithFields = async (form_id) => {
     const t = await Form.sequelize.transaction();
 
     try {
