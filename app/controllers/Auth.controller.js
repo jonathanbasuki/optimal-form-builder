@@ -16,28 +16,37 @@ exports.renderLogin = async (req, res) => {
 exports.login = async (req, res) => {
     const { username, password } = req.body;
 
-    const user = await User.findOne({
-        where: { username }
-    });
+    try {
+        const user = await User.findOne({ where: { username } });
 
-    if (!user) {
-        return res.redirect('/auth/login');
+        if (!user) {
+            return res.status(401).render('auth/login', {
+                error: 'Invalid username or password'
+            });
+        }
+
+        const passwordMatch = await bcrypt.compare(password, user.password_hash);
+
+        if (!passwordMatch) {
+            return res.status(401).render('auth/login', {
+                error: 'Invalid username or password'
+            });
+        }
+
+        // Save session
+        req.session.user = {
+            id: user.user_id,
+            username: user.username,
+            role: user.role
+        };
+
+        res.redirect('/dashboard');
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).render('login', {
+            error: 'Internal server error'
+        });
     }
-
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
-
-    if (!passwordMatch) {
-        return res.redirect('/auth/login');
-    }
-
-    // Save session
-    req.session.user = {
-        id: user.user_id,
-        username: user.username,
-        role: user.role
-    };
-
-    res.redirect('/dashboard');
 };
 
 // Logout handler
