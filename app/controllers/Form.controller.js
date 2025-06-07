@@ -23,6 +23,11 @@ exports.getAllForms = async (req, res) => {
     try {
         const forms = await formService.getAllForms();
 
+        return res.render('pages/form/index', {
+            title: 'Form Dashboard | Optimal Form Builder',
+            forms
+        });
+
         res.status(200).json({
             status: 200,
             message: 'Form data fetched successfully!',
@@ -40,6 +45,11 @@ exports.getAllForms = async (req, res) => {
 exports.getFormWithFields = async (req, res) => {
     try {
         const form = await formService.getFormWithFields(req.params.form_id);
+
+        return res.render('pages/form/edit_form', {
+            title: 'Edit Form | Optimal Form Builder',
+            form
+        });
 
         res.status(200).json({
             status: 200,
@@ -83,6 +93,8 @@ exports.deleteFormWithFields = async (req, res) => {
                 message: 'Form not found.'
             });
         }
+
+        return res.redirect('/dashboard/forms');
 
         res.status(200).json({
             status: 200,

@@ -4,8 +4,8 @@ exports.createUser = async (req, res) => {
     try {
         const user = await userService.createUser(req.body);
 
-        return res.redirect('/dashboard');
-        
+        return res.redirect('/dashboard/users');
+
         res.status(201).json({
             status: 201,
             message: 'User registered successfully!',
@@ -23,6 +23,11 @@ exports.createUser = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await userService.getAllUsers();
+
+        return res.render('pages/user/index', {
+            title: 'User Dashboard | Optimal Form Builder',
+            users
+        });
 
         res.status(200).json({
             status: 200,

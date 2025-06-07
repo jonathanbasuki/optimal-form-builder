@@ -67,6 +67,11 @@ exports.getAllFormResponses = async (form_id, page = 1, limit = 1) => {
                 model: FormField,
                 as: 'field',
                 attributes: ['field_name']
+            },
+            {
+                model: Form,
+                as: 'form',
+                attributes: ['title']
             }
         ],
     });
@@ -79,6 +84,7 @@ exports.getAllFormResponses = async (form_id, page = 1, limit = 1) => {
         if (!grouped[rid]) {
             grouped[rid] = {
                 form_id,
+                title: response.form.title,
                 response_id: rid,
                 answers: [],
                 created_at: response.created_at
