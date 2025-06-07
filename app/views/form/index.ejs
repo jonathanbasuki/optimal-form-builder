@@ -170,7 +170,7 @@
 
 <body
     class="bg-gradient-to-tr from-purple-900 via-purple-700 to-yellow-400 min-h-screen flex items-center justify-center p-4">
-    <main class="rounded-xl shadow-2xl max-w-3xl w-full pt-12 pb-4 flex flex-col text-white bg-transparent"
+    <main class="rounded-xl shadow-2xl max-w-3xl w-full pt-12 pb-4 px-4 flex flex-col text-white bg-transparent"
         id="form-data-container" data-form='<%= JSON.stringify(formData).replace(/' /g, "&apos;" ) %>'>
         <form id="optimal-form" class="flex flex-col" novalidate>
             <!-- Dynamic steps will be injected here -->
@@ -179,12 +179,12 @@
             <!-- Navigation buttons -->
             <div class="mt-8 flex justify-between select-none" aria-label="Form navigation">
                 <button type="button" id="prevBtn"
-                    class="text-purple-400 font-semibold px-6 py-2 rounded-lg border border-purple-400 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    class="hidden text-purple-400 font-semibold px-6 py-2 rounded-lg border border-purple-400 hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     disabled>
                     Previous
                 </button>
                 <button type="button" id="nextBtn"
-                    class="text-white font-semibold px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                    class="hidden text-white font-semibold px-6 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-400">
                     Next
                 </button>
                 <button type="submit" id="submitBtn"
