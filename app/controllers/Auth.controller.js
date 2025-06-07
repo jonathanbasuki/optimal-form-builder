@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
             role: user.role
         };
 
-        res.redirect('/dashboard');
+        res.redirect('/dashboard/forms');
     } catch (err) {
         console.error('Login error:', err);
         res.status(500).render('login', {
