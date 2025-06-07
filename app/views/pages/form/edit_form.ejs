@@ -1,0 +1,82 @@
+<section data-section="form-edit" class="max-w-4xl mx-auto">
+    <h2 class="heading-2 text-gray-900 mb-6">Edit Form</h2>
+    <form class="bg-white rounded-lg shadow-sm p-6" id="editForm" novalidate>
+        <div class="mb-4">
+            <label for="new_title" class="block font-medium text-gray-700 mb-1">Form Title</label>
+            <input type="text" id="new_title" name="new_title" value="<%= form.title %>" required
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+        <div class="mb-4">
+            <label for="new_subtitle" class="block font-medium text-gray-700 mb-1">Form Subtitle</label>
+            <textarea id="new_subtitle" name="new_subtitle" rows="3"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"><%= form.subtitle %></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="new_confirmation_message" class="block font-medium text-gray-700 mb-1">Confirmation
+                Message</label>
+            <textarea id="new_confirmation_message" name="new_confirmation_message" rows="3"
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"><%= form.confirmation_message %></textarea>
+        </div>
+        <div class="mb-6">
+            <label for="new_confirmation_action" class="block font-medium text-gray-700 mb-1">Whatsapp Contact
+                Link</label>
+            <input type="text" id="new_confirmation_action" name="new_confirmation_action"
+                value="<%= form.confirmation_action %>" required
+                class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <fieldset class="mb-4 border border-gray-200 rounded-lg p-4">
+            <legend class="font-semibold text-gray-900">Form Fields</legend>
+            <div id="editFormFieldsContainer" class="space-y-4" aria-live="polite" aria-relevant="additions removals">
+            </div>
+
+            <% form.fields.forEach((field)=> { %>
+                <div class="flex flex-col mb-3 md:flex-row md:items-center md:space-x-4 space-y-3 md:space-y-0"
+                    role="group" aria-label="Add new field">
+                    <div class="flex-1">
+                        <input id="new_field_name" type="text" value="<%= field.field_name %>"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            placeholder="Field Label" />
+                    </div>
+
+                    <div class="flex-1">
+                        <select id="new_field_type"
+                            class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            aria-label="Select field type">
+                            <option value="Short Text" <%=field.field_type=='Short Text' ? 'selected' : '' %>>
+                                Short Text</option>
+                            <option value="Long Text" <%=field.field_type=='Long Text' ? 'selected' : '' %>>Long Text
+                            </option>
+                            <option value="Number" <%=field.field_type=='Number' ? 'selected' : '' %>>Number</option>
+                            <option value="Date" <%=field.field_type=='Date' ? 'selected' : '' %>>Date</option>
+                            <option value="Multiple Choice" <%=field.field_type=='Multiple Choice' ? 'selected' : '' %>
+                                >Multiple Choice</option>
+                            <option value="Yes/No" <%=field.field_type=='Yes/No' ? 'selected' : '' %>>Yes/No</option>
+                            <option value="Dropdown" <%=field.field_type=='Dropdown' ? 'selected' : '' %>>Dropdown
+                            </option>
+                            <option value="Checkbox" <%=field.field_type=='Checkbox' ? 'selected' : '' %>>Checkbox
+                            </option>
+                            <option value="Rating" <%=field.field_type=='Rating' ? 'selected' : '' %>>Rating</option>
+                            <option value="Scale" <%=field.field_type=='Scale' ? 'selected' : '' %>>Scale</option>
+                            <option value="File Upload" <%=field.field_type=='File Upload' ? 'selected' : '' %>>File
+                                Upload</option>
+                        </select>
+                    </div>
+
+
+
+                </div>
+                <% }) %>
+
+                    <button type="button" id="editAddFieldButton"
+                        class="mt-2 md:mt-0 bg-indigo-600 text-white px-4 py-2 rounded-md font-semibold hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Add Field
+                    </button>
+        </fieldset>
+
+        <button type="submit"
+            class="bg-indigo-600 text-white px-5 py-2 rounded-md font-semibold hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            Save Changes
+        </button>
+    </form>
+</section>

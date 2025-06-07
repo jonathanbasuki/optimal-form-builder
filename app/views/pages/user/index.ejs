@@ -1,0 +1,22 @@
+<section data-section="users-list" class="max-w-5xl mx-auto space-y-6">
+    <h2 class="heading-2 text-gray-900">All Users</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" role="list" aria-label="Users list">
+        <% users.forEach((user)=> { %>
+            <article class="bg-white rounded-lg shadow-sm p-6 flex flex-col space-y-3" role="listitem">
+                <div class="flex items-center space-x-4">
+                    <div
+                        class="w-12 h-12 bg-indigo-200 rounded-full flex items-center justify-center text-indigo-700 font-semibold">
+                        <%= user.username.split(' ').map(word => word[0]).join('').toUpperCase(); %></div>
+                    <div>
+                        <p class="font-semibold text-gray-900">
+                            <%= user.username %>
+                        </p>
+                        <p class="text-gray-500 text-sm">
+                            <%= user.email_address %>
+                        </p>
+                    </div>
+                </div>
+            </article>
+            <% }) %>
+    </div>
+</section>

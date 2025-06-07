@@ -1,0 +1,179 @@
+<section data-section="response-detail" class="max-w-4xl mx-auto space-y-6" id="responseData">
+    <h2 class="heading-2 text-gray-900 flex items-center justify-between">
+        <span>Form Response Detail</span>
+        <div class="flex space-x-3" id="paginationControls">
+            <button id="prevResponseBtn" type="button"
+                class="bg-transparent text-indigo-600 px-4 py-1 rounded-md font-semibold hover:bg-indigo-100 transition disabled:text-indigo-300 disabled:bg-transparent disabled:cursor-not-allowed">
+                Previous
+            </button>
+            <button id="nextResponseBtn" type="button"
+                class="bg-transparent text-indigo-600 px-4 py-1 rounded-md font-semibold hover:bg-indigo-100 transition disabled:text-indigo-300 disabled:bg-transparent disabled:cursor-not-allowed">
+                Next
+            </button>
+        </div>
+
+    </h2>
+
+    <article class="bg-white rounded-lg shadow-sm p-6" id="responseCard" hidden>
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-lg text-gray-800" id="responseTitle"></h3>
+            <form id="deleteResponseForm" method="POST"
+                onsubmit="return confirm('Are you sure you want to delete this response?');">
+                <input type="hidden" name="_method" value="DELETE">
+                <button type="submit" title="Delete Response" aria-label="Delete Response">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 text-red-600 hover:text-red-800 transition">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <dl id="responseAnswers" class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6 text-gray-700"></dl>
+    </article>
+
+    <div id="emptyStateCard" class="bg-white rounded-lg shadow-sm p-6 text-center text-gray-600" hidden>
+        No responses yet.
+    </div>
+</section>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const responseElement = document.getElementById('responseData');
+        const formId = window.location.pathname.split('/')[3];
+
+        const responseTitle = document.getElementById('responseTitle');
+        const responseAnswers = document.getElementById('responseAnswers');
+        const prevBtn = document.getElementById('prevResponseBtn');
+        const nextBtn = document.getElementById('nextResponseBtn');
+        const responseCard = document.getElementById('responseCard');
+        const emptyStateCard = document.getElementById('emptyStateCard');
+        const paginationControls = document.getElementById('paginationControls');
+        const deleteForm = document.getElementById('deleteResponseForm');
+
+        let currentPage = 1;
+        let totalPages = 1;
+        let responses = [];
+
+        async function fetchResponses(page) {
+            try {
+                const res = await fetch(`http://localhost:3000/api/responses/${formId}?page=${page}`);
+                const json = await res.json();
+
+                responses = json.data.responses || [];
+                currentPage = json.data.page || 1;
+                totalPages = json.data.total_pages || 1;
+
+                if (responses.length === 0) {
+                    showEmptyView();
+                } else {
+                    showResponseView();
+                    renderResponse(0);
+                    updateButtonState();
+                }
+            } catch (err) {
+                console.error('Failed to fetch responses:', err);
+                showEmptyView();
+            }
+        }
+
+        function renderResponse(index) {
+            const resp = responses[index];
+
+            // Safety check if resp is undefined (shouldn't happen but just in case)
+            if (!resp) return;
+
+            responseTitle.textContent = `${resp.title} - Response ${currentPage}/${totalPages}`;
+            responseAnswers.innerHTML = '';
+
+            resp.answers.forEach(ans => {
+                const dt = document.createElement('dt');
+                dt.className = 'font-medium text-gray-900';
+                dt.textContent = ans.field_name;
+
+                const dd = document.createElement('dd');
+                dd.className = 'mb-4';
+
+                let val = ans.response_value;
+
+                if (ans.response_type === 'Yes/No') {
+                    const badge = document.createElement('span');
+                    badge.className = 'inline-block px-3 py-1 rounded-full text-xs font-semibold';
+
+                    if (val === '1' || val?.toLowerCase() === 'yes') {
+                        badge.textContent = 'Yes';
+                        badge.classList.add('bg-green-100', 'text-green-800');
+                    } else if (val === '0' || val?.toLowerCase() === 'no') {
+                        badge.textContent = 'No';
+                        badge.classList.add('bg-red-100', 'text-red-800');
+                    } else {
+                        badge.textContent = '-';
+                        badge.classList.add('bg-gray-100', 'text-gray-800');
+                    }
+
+                    dd.appendChild(badge);
+                }
+                else if (['Checkbox', 'Multiple Choice'].includes(ans.response_type)) {
+                    val = val ? val.split('|~').join(', ') : '-';
+                    dd.textContent = val;
+                }
+                else {
+                    if (val === null || val === '') {
+                        const badge = document.createElement('span');
+                        badge.textContent = '-';
+                        badge.className = 'inline-block px-3 py-1 rounded-full bg-gray-100 text-gray-800 text-xs font-semibold';
+                        dd.appendChild(badge);
+                    } else {
+                        dd.textContent = val;
+                    }
+                }
+
+                const container = document.createElement('div');
+                container.appendChild(dt);
+                container.appendChild(dd);
+
+                responseAnswers.appendChild(container);
+            });
+
+            // Update delete form action
+            if (deleteForm && resp.response_id) {
+                deleteForm.action = `/api/responses/${resp.response_id}?_method=DELETE`;
+                deleteForm.style.display = ''; // show form
+            }
+        }
+
+        function showEmptyView() {
+            responseCard.hidden = true;
+            emptyStateCard.hidden = false;
+            paginationControls.style.display = 'none';
+        }
+
+        function showResponseView() {
+            responseCard.hidden = false;
+            emptyStateCard.hidden = true;
+            paginationControls.style.display = 'flex';
+        }
+
+        function updateButtonState() {
+            prevBtn.disabled = currentPage <= 1;
+            nextBtn.disabled = currentPage >= totalPages;
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                fetchResponses(currentPage - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                fetchResponses(currentPage + 1);
+            }
+        });
+
+        // Load first page
+        fetchResponses(currentPage);
+    });
+</script>
