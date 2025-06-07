@@ -26,9 +26,9 @@ exports.renderForm = async (req, res) => {
             layout: false
         });
     } catch (err) {
-        res.status(500).json({
-            status: 500,
-            error: err.message
+        res.render('form/not_found', {
+            title: 'Form Not Found | 404',
+            layout: false
         });
     }
 };
