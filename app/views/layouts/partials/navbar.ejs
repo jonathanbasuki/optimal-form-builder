@@ -1,0 +1,17 @@
+<header class="flex items-center justify-between border-b border-gray-200 px-6 h-16 sticky top-0 bg-white z-10">
+    <button id="sidebarToggleBtn" aria-label="Open sidebar" class="text-gray-700 md:hidden focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    </button>
+    <h1 class="heading-1 text-gray-900 select-none">Dashboard</h1>
+    <!-- Logout Button on the right side -->
+    <form action="/auth/logout" method="POST" style="display: inline;">
+        <button id="logoutBtn"
+            class="bg-red-700 text-white px-4 py-2 rounded-md text-sm font-semibold hover:bg-red-900 transition focus:outline-none focus:ring-2 focus:ring-red-500"
+            type="submit">
+            Logout
+        </button>
+    </form>
+</header>

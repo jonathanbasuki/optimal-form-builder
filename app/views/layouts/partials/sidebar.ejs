@@ -1,0 +1,91 @@
+<aside
+    class="bg-white border-r border-gray-200 w-64 flex-shrink-0 flex flex-col fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-30 md:z-auto"
+    id="sidebar">
+    <div class="flex items-center justify-center px-6 h-16 border-b border-gray-200">
+        <!-- Logo replacing Dashboard text in sidebar -->
+        <a href="#" aria-label="Homepage" class="inline-flex items-center space-x-2">
+            <!-- Simple SVG Logo (circle + S letter shape) -->
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M7 12h10"></path>
+                <path d="M7 8h6"></path>
+                <path d="M7 16h10"></path>
+            </svg>
+            <span class="text-xl font-bold text-indigo-600 select-none">Formio</span>
+        </a>
+        <button class="md:hidden text-gray-700 focus:outline-none absolute right-4" id="sidebarCloseBtn"
+            aria-label="Close sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+        </button>
+    </div>
+
+    <nav class="flex-1 overflow-y-auto px-2 py-6 space-y-2" aria-label="Main navigation">
+        <!-- Form Management -->
+        <div>
+            <h2 class="px-3 py-1 text-gray-500 uppercase tracking-wide text-xs font-semibold">Form Management
+            </h2>
+            <ul class="space-y-1 font-medium" role="list">
+                <li>
+                    <a href="/dashboard/forms" data-section="forms-list"
+                        class="menu-btn w-full flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
+                        role="link">
+                        <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 7h18M3 12h18M3 17h18"></path>
+                        </svg>
+                        List All Forms
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard/forms/new" data-section="form-create"
+                        class="menu-btn w-full flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
+                        role="link">
+                        <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Create New Form
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- User Management -->
+        <div>
+            <h2 class="px-3 py-1 text-gray-500 uppercase tracking-wide text-xs font-semibold mt-6">User
+                Management</h2>
+            <ul class="space-y-1 font-medium" role="list">
+                <li>
+                    <a href="/dashboard/users" data-section="users-list"
+                        class="menu-btn w-full flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
+                        role="link">
+                        <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M3 7h18M3 12h18M3 17h18"></path>
+                        </svg>
+                        List All Users
+                    </a>
+                </li>
+                <li>
+                    <a href="/dashboard/users/new" data-section="user-create"
+                        class="menu-btn w-full flex items-center px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition"
+                        role="link">
+                        <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Create New User
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</aside>
+
+<!-- Overlay for mobile sidebar open -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-25 z-20 hidden md:hidden"></div>
