@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const engine = require('ejs-mate');
 const expressLayouts = require('express-ejs-layouts');
+const methodOverride = require('method-override');
 
 const sessionMiddleware = require('./app/middlewares/authSession.js');
 
@@ -27,12 +28,18 @@ app.set('views', path.join(__dirname, 'app/views'));
 // Middleware
 app.use(bodyParser.json());
 app.use(sessionMiddleware);
+app.use(methodOverride('_method'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public'))); // Path to assets images
 app.use(express.static(path.join(__dirname, 'src'))); // Path to scripts
+
+app.use((req, res, next) => {
+    res.locals.baseUrl = process.env.BASE_URL || `${req.protocol}://${req.get('host')}`;
+    next();
+});
 
 // Routing
 app.use(authRoute);
